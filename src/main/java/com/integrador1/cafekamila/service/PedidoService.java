@@ -71,4 +71,15 @@ public class PedidoService {
 
         return pedidoRepository.save(pedido);
     }
+
+    // NUEVO METODO
+    public Pedido cambiarEstado(Integer idPedido, String nuevoEstado) {
+
+        Pedido pedido = pedidoRepository.findById(idPedido)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+
+        pedido.setEstado(nuevoEstado);
+
+        return pedidoRepository.save(pedido);
+    }
 }

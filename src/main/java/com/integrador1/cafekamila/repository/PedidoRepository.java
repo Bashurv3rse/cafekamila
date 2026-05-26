@@ -2,7 +2,9 @@ package com.integrador1.cafekamila.repository;
 
 import com.integrador1.cafekamila.model.Pedido;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface PedidoRepository extends JpaRepository<Pedido, Long> {
+@Repository
+public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
 
 }

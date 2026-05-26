@@ -5,6 +5,7 @@ import com.integrador1.cafekamila.repository.PedidoRepository;
 import com.integrador1.cafekamila.service.PedidoService;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,5 +30,18 @@ public class PedidoController {
     public Pedido crearPedido(@RequestBody Pedido pedido) {
 
         return pedidoService.guardarPedido(pedido);
+    }
+
+    // NUEVO ENDPOINT
+    @PutMapping("/{id}/estado")
+    public Pedido cambiarEstado(
+            @PathVariable Integer id,
+            @RequestBody Map<String, String> body
+    ) {
+
+        return pedidoService.cambiarEstado(
+                id,
+                body.get("estado")
+        );
     }
 }
