@@ -1,5 +1,7 @@
 package com.integrador1.cafekamila.controller;
 
+import com.integrador1.cafekamila.dto.request.PedidoRequestDTO;
+import com.integrador1.cafekamila.dto.response.PedidoResponseDTO;
 import com.integrador1.cafekamila.model.Pedido;
 import com.integrador1.cafekamila.repository.PedidoRepository;
 import com.integrador1.cafekamila.service.PedidoService;
@@ -20,28 +22,47 @@ public class PedidoController {
     @Autowired
     private PedidoService pedidoService;
 
+    // LISTAR TODOS
     @GetMapping
     public List<Pedido> listarPedidos() {
-
         return pedidoRepository.findAll();
     }
 
-    @PostMapping
-    public Pedido crearPedido(@RequestBody Pedido pedido) {
+    // OBTENER POR ID (NUEVO)
+    @GetMapping("/{id}")
+    public Pedido obtenerPedidoPorId(@PathVariable Long id) {
 
-        return pedidoService.guardarPedido(pedido);
+        return pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(
+                        "Pedido no encontrado"
+                ));
     }
 
-    // NUEVO ENDPOINT
+    // CREAR PEDIDO
+    @PostMapping
+    public PedidoResponseDTO crearPedido(
+            @RequestBody PedidoRequestDTO pedidoDTO
+    ) {
+        return pedidoService.guardarPedido(pedidoDTO);
+    }
+
+    // CAMBIAR ESTADO
     @PutMapping("/{id}/estado")
     public Pedido cambiarEstado(
-            @PathVariable Integer id,
+            @PathVariable Long id,
             @RequestBody Map<String, String> body
     ) {
 
+        String estadoTexto = body.get("estado");
+
+        Pedido.EstadoPedido nuevoEstado =
+                Pedido.EstadoPedido.valueOf(
+                        estadoTexto.toUpperCase()
+                );
+
         return pedidoService.cambiarEstado(
                 id,
-                body.get("estado")
+                nuevoEstado
         );
     }
 }

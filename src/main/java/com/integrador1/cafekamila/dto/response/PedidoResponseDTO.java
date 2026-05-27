@@ -1,43 +1,25 @@
-package com.integrador1.cafekamila.model;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
+package com.integrador1.cafekamila.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import com.integrador1.cafekamila.model.EstadoPedido;
+import com.integrador1.cafekamila.model.Pedido;
 
-@Entity
-public class Pedido {
+public class PedidoResponseDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPedido;
 
     private String nombreCliente;
 
     private String tipoPedido;
 
+    private Pedido.EstadoPedido estado;;
+
     private LocalDateTime fechaHora;
 
     private Double total;
 
-    // ENUM DE ESTADOS
-    public enum EstadoPedido {
-        PENDIENTE,
-        PREPARACION,
-        LISTO_PARA_ENTREGAR,
-        ENTREGADO,
-        CANCELADO
-    }
-
-    @Enumerated(EnumType.STRING)
-    private EstadoPedido estado;
-
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<DetallePedido> detalles;
-
-    // GETTERS Y SETTERS
+    private List<DetallePedidoResponseDTO> detalles;
 
     public Long getIdPedido() {
         return idPedido;
@@ -63,6 +45,14 @@ public class Pedido {
         this.tipoPedido = tipoPedido;
     }
 
+    public Pedido.EstadoPedido getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Pedido.EstadoPedido estado) {
+        this.estado = estado;
+    }
+
     public LocalDateTime getFechaHora() {
         return fechaHora;
     }
@@ -79,19 +69,11 @@ public class Pedido {
         this.total = total;
     }
 
-    public EstadoPedido getEstado() {
-        return estado;
-    }
-
-    public void setEstado(EstadoPedido estado) {
-        this.estado = estado;
-    }
-
-    public List<DetallePedido> getDetalles() {
+    public List<DetallePedidoResponseDTO> getDetalles() {
         return detalles;
     }
 
-    public void setDetalles(List<DetallePedido> detalles) {
+    public void setDetalles(List<DetallePedidoResponseDTO> detalles) {
         this.detalles = detalles;
     }
 }

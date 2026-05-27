@@ -1,4 +1,7 @@
-package com.integrador1.cafekamila.dto;
+package com.integrador1.cafekamila.dto.response;
+
+import com.integrador1.cafekamila.dto.PedidoSimpleDTO;
+import com.integrador1.cafekamila.dto.ProductoSimpleDTO;
 
 public class DetallePedidoResponseDTO {
 
