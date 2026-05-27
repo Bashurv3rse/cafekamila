@@ -20,6 +20,15 @@ public class PedidoService {
 
     public Pedido guardarPedido(Pedido pedido) {
 
+        // VALIDAR QUE EL PEDIDO TENGA DETALLES
+        if (pedido.getDetalles() == null
+                || pedido.getDetalles().isEmpty()) {
+
+            throw new RuntimeException(
+                    "El pedido debe tener al menos un producto"
+            );
+        }
+
         double total = 0;
 
         pedido.setFechaHora(LocalDateTime.now());
@@ -27,20 +36,32 @@ public class PedidoService {
 
         for (DetallePedido detalle : pedido.getDetalles()) {
 
-            Producto productoReal = productoRepository
-                .findById(detalle.getProducto().getIdProducto())
-                .orElseThrow();
-
-            if (productoReal.getStock() < detalle.getCantidad()) {
+            // VALIDAR CANTIDAD
+            if (detalle.getCantidad() <= 0) {
 
                 throw new RuntimeException(
-                    "Stock insuficiente para el producto: "
-                    + productoReal.getNombre()
+                        "La cantidad debe ser mayor a 0"
                 );
             }
 
+            Producto productoReal = productoRepository
+                    .findById(detalle.getProducto().getIdProducto())
+                    .orElseThrow(() -> new RuntimeException(
+                    "Producto no encontrado"
+            ));
+
+            // VALIDAR STOCK
+            if (productoReal.getStock() < detalle.getCantidad()) {
+
+                throw new RuntimeException(
+                        "Stock insuficiente para el producto: "
+                        + productoReal.getNombre()
+                );
+            }
+
+            // DESCONTAR STOCK
             productoReal.setStock(
-                productoReal.getStock() - detalle.getCantidad()
+                    productoReal.getStock() - detalle.getCantidad()
             );
 
             productoRepository.save(productoReal);
@@ -51,6 +72,7 @@ public class PedidoService {
 
             double precio;
 
+            // PRECIO MAYOR O MENOR
             if (pedido.getTipoPedido().equalsIgnoreCase("Mayor")) {
 
                 precio = productoReal.getPrecioMayor();
@@ -72,11 +94,37 @@ public class PedidoService {
         return pedidoRepository.save(pedido);
     }
 
-    // NUEVO METODO
+    // CAMBIAR ESTADO DEL PEDIDO
     public Pedido cambiarEstado(Integer idPedido, String nuevoEstado) {
 
         Pedido pedido = pedidoRepository.findById(idPedido)
-                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+                .orElseThrow(() -> new RuntimeException(
+                "Pedido no encontrado"
+        ));
+
+        // VALIDAR SI YA ESTA CANCELADO
+        if (pedido.getEstado().equalsIgnoreCase("Cancelado")) {
+
+            throw new RuntimeException(
+                    "El pedido ya está cancelado"
+            );
+        }
+
+        // SI EL NUEVO ESTADO ES CANCELADO
+        // DEVOLVER STOCK
+        if (nuevoEstado.equalsIgnoreCase("Cancelado")) {
+
+            for (DetallePedido detalle : pedido.getDetalles()) {
+
+                Producto producto = detalle.getProducto();
+
+                producto.setStock(
+                        producto.getStock() + detalle.getCantidad()
+                );
+
+                productoRepository.save(producto);
+            }
+        }
 
         pedido.setEstado(nuevoEstado);
 
