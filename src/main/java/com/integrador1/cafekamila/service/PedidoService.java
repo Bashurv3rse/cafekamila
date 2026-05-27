@@ -186,4 +186,27 @@ public class PedidoService {
 
         return dto;
     }
+    public List<PedidoResponseDTO> obtenerPedidosPorEstado(
+        Pedido.EstadoPedido estado) {
+
+    List<Pedido> pedidos = pedidoRepository.findByEstado(estado);
+
+    return pedidos.stream()
+            .map(this::convertirAPedidoResponseDTO)
+            .toList();
+    }
+    public List<PedidoResponseDTO> obtenerHistorial() {
+
+    List<Pedido> pedidos =
+            pedidoRepository.findByEstadoIn(
+                    List.of(
+                            Pedido.EstadoPedido.ENTREGADO,
+                            Pedido.EstadoPedido.CANCELADO
+                    )
+            );
+
+    return pedidos.stream()
+            .map(this::convertirAPedidoResponseDTO)
+            .toList();
+    }
 }

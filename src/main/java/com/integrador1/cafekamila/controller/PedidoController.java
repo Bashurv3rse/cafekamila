@@ -28,7 +28,30 @@ public class PedidoController {
         return pedidoRepository.findAll();
     }
 
-    // OBTENER POR ID (NUEVO)
+    // HISTORIAL (ENTREGADOS Y CANCELADOS)
+    @GetMapping("/historial")
+    public List<PedidoResponseDTO> obtenerHistorial() {
+
+        return pedidoService.obtenerHistorial();
+    }
+
+    // OBTENER POR ESTADO
+    @GetMapping("/estado/{estado}")
+    public List<PedidoResponseDTO> obtenerPorEstado(
+            @PathVariable String estado
+    ) {
+
+        Pedido.EstadoPedido estadoPedido =
+                Pedido.EstadoPedido.valueOf(
+                        estado.toUpperCase()
+                );
+
+        return pedidoService.obtenerPedidosPorEstado(
+                estadoPedido
+        );
+    }
+
+    // OBTENER POR ID
     @GetMapping("/{id}")
     public Pedido obtenerPedidoPorId(@PathVariable Long id) {
 

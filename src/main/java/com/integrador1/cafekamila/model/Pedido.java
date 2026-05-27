@@ -20,7 +20,7 @@ public class Pedido {
     private LocalDateTime fechaHora;
 
     private Double total;
-
+     
     // ENUM DE ESTADOS
     public enum EstadoPedido {
         PENDIENTE,

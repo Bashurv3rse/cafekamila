@@ -13,11 +13,11 @@ public class PedidoResponseDTO {
 
     private String tipoPedido;
 
-    private Pedido.EstadoPedido estado;;
+    private Pedido.EstadoPedido estado;
 
     private LocalDateTime fechaHora;
 
-    private Double total;
+    private Double total;  
 
     private List<DetallePedidoResponseDTO> detalles;
 
