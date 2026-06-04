@@ -175,7 +175,8 @@ public class PedidoService {
 
             detalleDTO.setProducto(
                     new ProductoSimpleDTO(
-                            detalle.getProducto().getIdProducto()
+                            detalle.getProducto().getIdProducto(),
+                            detalle.getProducto().getNombre()
                     )
             );
 
