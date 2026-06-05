@@ -1,5 +1,5 @@
 # Paso 1: Compilar la aplicación utilizando Maven y Java 25
-FROM maven:3.9.9-eclipse-temurin-25 AS build
+FROM maven:3-eclipse-temurin-25 AS build
 COPY . .
 RUN mvn clean package -DskipTests
 
