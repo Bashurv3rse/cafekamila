@@ -5,10 +5,17 @@ import com.integrador1.cafekamila.dto.response.PedidoResponseDTO;
 import com.integrador1.cafekamila.model.Pedido;
 import com.integrador1.cafekamila.repository.PedidoRepository;
 import com.integrador1.cafekamila.service.PedidoService;
+import com.integrador1.cafekamila.service.ExcelExportService;
 
 import java.util.List;
 import java.util.Map;
 
+import java.io.ByteArrayInputStream;
+
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +29,9 @@ public class PedidoController {
 
     @Autowired
     private PedidoService pedidoService;
+    
+    @Autowired
+    private ExcelExportService excelExportService;
 
     // LISTAR TODOS
     @GetMapping
@@ -88,5 +98,73 @@ public class PedidoController {
                 id,
                 nuevoEstado
         );
+    }
+    @GetMapping("/exportar")
+    public ResponseEntity<InputStreamResource> exportarExcel() {
+
+        try {
+
+            ByteArrayInputStream excel =
+                    excelExportService.exportarPedidos();
+
+            HttpHeaders headers = new HttpHeaders();
+
+            headers.add(
+                    "Content-Disposition",
+                    "attachment; filename=pedidos.xlsx"
+            );
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(
+                            MediaType.parseMediaType(
+                                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            )
+                    )
+                    .body(
+                            new InputStreamResource(excel)
+                    );
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(
+                    "Error al generar Excel",
+                    e
+            );
+        }
+    }
+    @GetMapping("/historial/exportar")
+    public ResponseEntity<InputStreamResource> exportarHistorialExcel() {
+
+        try {
+
+            ByteArrayInputStream excel =
+                    excelExportService.exportarHistorial();
+
+            HttpHeaders headers = new HttpHeaders();
+
+            headers.add(
+                    "Content-Disposition",
+                    "attachment; filename=historial_pedidos.xlsx"
+            );
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(
+                            MediaType.parseMediaType(
+                                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            )
+                    )
+                    .body(
+                            new InputStreamResource(excel)
+                    );
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(
+                    "Error al generar historial Excel",
+                    e
+            );
+        }
     }
 }

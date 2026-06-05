@@ -11,6 +11,8 @@ import com.integrador1.cafekamila.model.Pedido;
 import com.integrador1.cafekamila.model.Producto;
 import com.integrador1.cafekamila.repository.PedidoRepository;
 import com.integrador1.cafekamila.repository.ProductoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,6 +24,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class PedidoService {
 
+    private static final Logger logger =
+            LoggerFactory.getLogger(PedidoService.class);
+    
     @Autowired
     private PedidoRepository pedidoRepository;
 
@@ -98,14 +103,30 @@ public class PedidoService {
 
         pedido.setDetalles(detalles);
         pedido.setTotal(total);
-
+        
+        logger.info(
+            "Creando pedido para cliente: {}",
+            pedido.getNombreCliente()
+        );
+        
         Pedido pedidoGuardado = pedidoRepository.save(pedido);
+        
+        logger.info(
+            "Pedido {} creado correctamente. Total: {}",
+            pedidoGuardado.getIdPedido(),
+            pedidoGuardado.getTotal()
+        );
 
         return convertirAPedidoResponseDTO(pedidoGuardado);
     }
 
     // CAMBIAR ESTADO DEL PEDIDO
     public Pedido cambiarEstado(Long idPedido,Pedido.EstadoPedido nuevoEstado){
+        
+        logger.info(
+            "Cambio de estado solicitado para pedido {}",
+            idPedido
+        );
 
         Pedido pedido = pedidoRepository.findById(idPedido)
                 .orElseThrow(() -> new RuntimeException(
@@ -135,7 +156,12 @@ public class PedidoService {
                 productoRepository.save(producto);
             }
         }
-
+        logger.info(
+            "Pedido {}: {} -> {}",
+            pedido.getIdPedido(),
+            pedido.getEstado(),
+            nuevoEstado
+        );
         pedido.setEstado(nuevoEstado);
 
         return pedidoRepository.save(pedido);

@@ -2,7 +2,6 @@ package com.integrador1.cafekamila.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import com.integrador1.cafekamila.model.EstadoPedido;
 import com.integrador1.cafekamila.model.Pedido;
 
 public class PedidoResponseDTO {
